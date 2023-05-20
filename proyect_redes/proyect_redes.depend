@@ -2,7 +2,7 @@
 1684380319 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\main.cpp
 	<iostream>
 
-1684380305 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\servidor.cpp
+1684466131 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\servidor.cpp
 	<iostream>
 	<winsock2.h>
 
