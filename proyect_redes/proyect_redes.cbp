@@ -5,6 +5,7 @@
 		<Option title="proyect_redes" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="battleship_CDR/" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/proyect_redes" prefix_auto="1" extension_auto="1" />
@@ -27,13 +28,32 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="Cliente">
+				<Option output="proyect_redes" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="Servidor">
+				<Option output="proyect_redes" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../cliente.cpp" />
-		<Unit filename="../main.cpp" />
-		<Unit filename="../servidor.cpp" />
+		<Unit filename="../cliente.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="../main.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="../servidor.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

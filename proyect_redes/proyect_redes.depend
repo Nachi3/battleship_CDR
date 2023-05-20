@@ -10,3 +10,15 @@
 	<iostream>
 	<winsock2.h>
 
+1684551918 source:c:\users\moises\onedrive\escritorio\redes tarea 1\battleship_cdr\cliente.cpp
+	<iostream>
+	<winsock2.h>
+	<time.h>
+
+1684564436 source:c:\users\moises\onedrive\escritorio\redes tarea 1\battleship_cdr\main.cpp
+	<iostream>
+
+1684551045 source:c:\users\moises\onedrive\escritorio\redes tarea 1\battleship_cdr\servidor.cpp
+	<iostream>
+	<winsock2.h>
+

@@ -69,7 +69,7 @@ public:
     }
 };
 
-/*
+
 int main()
 {
   Server *Servidor = new Server();
@@ -79,4 +79,4 @@ int main()
      Servidor->Enviar();
   }
 }
-*/
+
