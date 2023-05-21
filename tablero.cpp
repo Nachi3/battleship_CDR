@@ -50,6 +50,29 @@ public:
         MostrarTablero();
     }
 
+    void GenerarTableroManual() {
+        // Solicitar al usuario que ingrese las posiciones de los barcos manualmente
+        MostrarTablero();
+        ColocarBarcoManual('P', PORTAAVIONES_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('B', BUQUE_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('B', BUQUE_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('S', SUBMARINO_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('S', SUBMARINO_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('L', LANCHA_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('L', LANCHA_SIZE);
+        system("cls"); MostrarTablero();
+        ColocarBarcoManual('L', LANCHA_SIZE);
+
+        // Mostrar el tablero generado
+        system("cls"); MostrarTablero();
+    }
+    
     void MostrarTablero() {
         //Poner encabezado
         printf("\n    A  B  C  D  E  F  G  H  I  J  K  L  M  N  O\n");
@@ -58,15 +81,64 @@ public:
         for (int i = 0; i < SIZE; i++) {
             printf("%2d|", i);
             for (int j = 0; j < SIZE; j++) {
-                // Si la posicion esta vacia dibuja una olita
                 if (board[i][j] == ' '){
-                    cout << "[" << "~" << "]" ;
+                    cout << "[" ;
+                    // Se pone el símbolo '~' como color celeste.
+                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN);
+                    cout << "~";
+                    ResetConsoleColour(Attributes);
+                    cout << "]" ;
+                } else if (board[i][j] == 'P'){
+                    cout << "[";
+                    // El portaaviones es definido con un color verde.
+                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_GREEN);
+                    cout << board[i][j];
+                    ResetConsoleColour(Attributes);
+                    cout << "]";
+                } else if (board[i][j] == 'L'){
+                    cout << "[";
+                    // Las lanchas son definidas con un color rojo
+                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_RED);
+                    cout << board[i][j];
+                    ResetConsoleColour(Attributes);
+                    cout << "]";
+                }else if (board[i][j] == 'B'){
+                    cout << "[";
+                    // Los buques son definidos con un color violeta
+                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_RED);
+                    cout << board[i][j];
+                    ResetConsoleColour(Attributes);
+                    cout << "]";
+                }else if(board[i][j] == 'S'){
+                    cout << "[";
+                    // Los submarinos son definidos con un color amarillo
+                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN);
+                    cout << board[i][j];
+                    ResetConsoleColour(Attributes);
+                    cout << "]";
                 } else {
                     cout << "[" << board[i][j] << "]";
                 }
             }
             cout << endl;
         }
+    }
+    
+    // Coloca el carácter X en las coordenadas de disparos indicadas
+    void shot (int x, int y) {
+		if((x>=0 && x<SIZE) && (y>=0 && y<SIZE)) {
+            board[x][y] = 'X';
+        } else {
+            cout << "Ingresa valores validos\n";
+        }
+	}
+
+    // Indicar si en el tablero solo existe agua o disparos
+	int ganar(){
+        for(int i = 0; i < SIZE; i++)
+            for(int j = 0; j < SIZE; j++)
+                if(board[i][j]!=' ' && board[i][j]!='X') return 0;
+        return 1;
     }
 
 private:
@@ -104,7 +176,41 @@ private:
         }
     }
 
+    void ColocarBarcoManual(char shipType, int shipSize) {
+        // Solicitar al usuario que ingrese la posición del barco manualmente
+        cout << "\nColocando barco de tipo " << shipType << " (tamaño: " << shipSize << ")" << endl;
 
+        bool isValid = false;
+        while (!isValid) {
+            int row, col;
+            char orientation;
+
+            cout << "Ingrese la fila (0-" << SIZE - 1 << "): ";
+            cin >> row;
+            cout << "Ingrese la columna (0-" << SIZE - 1 << "): ";
+            cin >> col;
+            cout << "Ingrese la orientación (H para horizontal, V para vertical): ";
+            cin >> orientation;
+
+            if (EsPosicionValida(row, col, shipSize, orientation)) {
+                if (orientation == 'H') {
+                    // Colocar el barco en posición horizontal
+                    for (int i = 0; i < shipSize; i++) {
+                        board[row][col + i] = shipType;
+                    }
+                } else {
+                    // Colocar el barco en posición vertical
+                    for (int i = 0; i < shipSize; i++) {
+                        board[row + i][col] = shipType;
+                    }
+                }
+                isValid = true;
+            } else {
+                cout << "La posición no es válida. Intente nuevamente." << endl;
+            }
+        }
+    }
+    
     bool EsPosicionValida(int row, int col, int shipSize, char orientation) {
         // Verificar si la posición y orientación son válidas para colocar el barco
 
@@ -141,4 +247,17 @@ private:
         return true;
     }
 
+    void SetConsoleColour(WORD* Attributes, DWORD Colour) {
+        // Método para cambiar el color del Foreground o el Background de la consola
+        CONSOLE_SCREEN_BUFFER_INFO Info;
+        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+        GetConsoleScreenBufferInfo(hStdout, &Info);
+        *Attributes = Info.wAttributes;
+        SetConsoleTextAttribute(hStdout, Colour);
+    }
+
+    void ResetConsoleColour(WORD Attributes) {
+        // Método para reestablecer el color del Foreground o el Background de la consola
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Attributes);
+    }
 };
