@@ -1,8 +1,10 @@
 # depslib dependency file v1.0
-1684380319 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\main.cpp
+1684650183 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\main.cpp
 	<iostream>
+	<windows.h>
+	"tablero.cpp"
 
-1684466131 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\servidor.cpp
+1684549512 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\servidor.cpp
 	<iostream>
 	<winsock2.h>
 
@@ -10,6 +12,7 @@
 	<iostream>
 	<winsock2.h>
 
+<<<<<<< HEAD
 1684551918 source:c:\users\moises\onedrive\escritorio\redes tarea 1\battleship_cdr\cliente.cpp
 	<iostream>
 	<winsock2.h>
@@ -21,4 +24,17 @@
 1684551045 source:c:\users\moises\onedrive\escritorio\redes tarea 1\battleship_cdr\servidor.cpp
 	<iostream>
 	<winsock2.h>
+=======
+1684651018 source:c:\users\nacho\desktop\redes_rau2\battleship_cdr\tablero.cpp
+	<iostream>
+	<cstdlib>
+	<ctime>
+	<windows.h>
+
+1684651018 c:\users\nacho\desktop\redes_rau2\battleship_cdr\tablero.cpp
+	<iostream>
+	<cstdlib>
+	<ctime>
+	<windows.h>
+>>>>>>> ignaciopt
 
