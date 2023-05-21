@@ -58,7 +58,7 @@ public:
     }
 };
 
-
+/*
 int main()
 {
     Client* Cliente = new Client();
@@ -70,3 +70,4 @@ int main()
         Sleep(1000);
     }
 }
+*/
