@@ -1,29 +1,48 @@
+/* odigo que implementa la clase Server, esta contiene el socket del servidor
+y emplea métodos para el envio y recepción de mensajes*/
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include <iostream>
-#include <winsock2.h>
 
 using namespace std;
 
 class Server{
 public:
-    WSADATA WSAData;
-    SOCKET server, client;
-    SOCKADDR_IN serverAddr, clientAddr;
+    // Definicion de variables
+    int server, client; int opt = 1;
+    struct sockaddr_in serverAddr, clientAddr;
     char buffer[1024];
     Server()
     {
-        WSAStartup(MAKEWORD(2,0), &WSAData);
-        server = socket(AF_INET, SOCK_STREAM, 0);
+        // Creando el socket
+        if ((server = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+            perror("socket failed");
+            exit(EXIT_FAILURE);
+        }
+
+        // Forzar la conexión del socket al puerto 8080
+        if (setsockopt(server, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
+                       &opt, sizeof(opt))){
+            perror("setsockopt");
+            exit(EXIT_FAILURE);
+        }
 
         serverAddr.sin_addr.s_addr = INADDR_ANY;
         serverAddr.sin_family = AF_INET;
         serverAddr.sin_port = htons(5555);
 
-        bind(server, (SOCKADDR *)&serverAddr, sizeof(serverAddr));
+        // Establecer la conexion
+        bind(server, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+        // socket en escucha por alguna conexion entrante
         listen(server, 0);
 
         cout << "Escuchando para conexiones entrantes." << endl;
         int clientAddrSize = sizeof(clientAddr);
-        if((client = accept(server, (SOCKADDR *)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
+        if((client = accept(server, (struct sockaddr*)&clientAddr, (socklen_t*)&clientAddrSize)) < 0)
         {
             cout << "Cliente conectado!" << endl;
         }
@@ -46,12 +65,12 @@ public:
     }
     void CerrarSocket()
     {
-        closesocket(client);
+        close(client);
         cout << "Socket cerrado, cliente desconectado." << endl;
     }
 };
 
-/*
+
 
 int main()
 {
@@ -62,5 +81,5 @@ int main()
      Servidor->Enviar();
   }
 
-}*/
+}
 
