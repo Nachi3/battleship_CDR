@@ -1,6 +1,5 @@
 // first commit
 #include <iostream>
-#include <windows.h>
 #include "tablero.cpp"
 
 using namespace std;
@@ -10,7 +9,7 @@ int main(){
     int option;
     Battleship mybattleship;
 
-    cout << "\n¿Como desea generar su tablero?:";
+    cout << "\nï¿½Como desea generar su tablero?:";
     cout << "\n(1) Aleatoriamente\n(2) Manualmente\nEliga una opcion: ";
     cin >> option;
 
@@ -22,10 +21,10 @@ int main(){
         cout << "\nIngrese una opcion valida";
     }
 
-    boolean win = false;
+    bool win = false;
     while(!win){
         int position_x, position_y;
-        cout << "\nDisparame en la jeta\nPosicion x: ";
+        cout << "\nDisparame\nPosicion x: ";
         cin >> position_x;
         cout << "Posicion y: ";
         cin >> position_y;

@@ -1,25 +1,25 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <windows.h>
+// #include <windows.h>
 
 
 using namespace std;
 
 class Battleship{
 private:
-    // Tamaño del tablero
+    // Tamaï¿½o del tablero
     static const int SIZE = 15;
-    // Tamaño del portaaviones
+    // Tamaï¿½o del portaaviones
     static const int PORTAAVIONES_SIZE = 5;
-    // Tamaño del buque
+    // Tamaï¿½o del buque
     static const int BUQUE_SIZE = 4;
-    // Tamaño del submarino
+    // Tamaï¿½o del submarino
     static const int SUBMARINO_SIZE = 3;
-    // Tamaño de la lancha
+    // Tamaï¿½o de la lancha
     static const int LANCHA_SIZE = 1;
     // Variable para el cambio de color
-    WORD Attributes = 0;
+    //WORD Attributes = 0;
 
     char board[SIZE][SIZE];
 
@@ -75,56 +75,29 @@ public:
     
     void MostrarTablero() {
         //Poner encabezado
-        printf("\n    A  B  C  D  E  F  G  H  I  J  K  L  M  N  O\n");
+        printf("\n    0  1  2  3  4  5  6  7  8  9  10 11 12 13 14\n");
         printf("   ---------------------------------------------\n");
         // Mostrar el tablero en la consola
         for (int i = 0; i < SIZE; i++) {
             printf("%2d|", i);
             for (int j = 0; j < SIZE; j++) {
                 if (board[i][j] == ' '){
-                    cout << "[" ;
-                    // Se pone el símbolo '~' como color celeste.
-                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN);
-                    cout << "~";
-                    ResetConsoleColour(Attributes);
-                    cout << "]" ;
-                } else if (board[i][j] == 'P'){
-                    cout << "[";
-                    // El portaaviones es definido con un color verde.
-                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_GREEN);
-                    cout << board[i][j];
-                    ResetConsoleColour(Attributes);
-                    cout << "]";
-                } else if (board[i][j] == 'L'){
-                    cout << "[";
-                    // Las lanchas son definidas con un color rojo
-                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_RED);
-                    cout << board[i][j];
-                    ResetConsoleColour(Attributes);
-                    cout << "]";
-                }else if (board[i][j] == 'B'){
-                    cout << "[";
-                    // Los buques son definidos con un color violeta
-                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_RED);
-                    cout << board[i][j];
-                    ResetConsoleColour(Attributes);
-                    cout << "]";
-                }else if(board[i][j] == 'S'){
-                    cout << "[";
-                    // Los submarinos son definidos con un color amarillo
-                    SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN);
-                    cout << board[i][j];
-                    ResetConsoleColour(Attributes);
-                    cout << "]";
+                    // impresion de mar
+                    cout << "[~]";
                 } else {
-                    cout << "[" << board[i][j] << "]";
+                    cout << "[";
+                    // Impresion de barcos.
+                    // SetConsoleColour(&Attributes, FOREGROUND_INTENSITY | FOREGROUND_GREEN);
+                    cout << board[i][j];
+                    //ResetConsoleColour(Attributes);
+                    cout << "]";
                 }
             }
             cout << endl;
         }
     }
     
-    // Coloca el carácter X en las coordenadas de disparos indicadas
+    // Coloca el carï¿½cter X en las coordenadas de disparos indicadas
     void shot (int x, int y) {
 		if((x>=0 && x<SIZE) && (y>=0 && y<SIZE)) {
             board[x][y] = 'X';
@@ -143,7 +116,7 @@ public:
 
 private:
     void GenerarBarco(char shipType, int shipSize) {
-        // Generar una posición aleatoria para el barco
+        // Generar una posiciï¿½n aleatoria para el barco
         int row, col, vert_hor;
         char orientation;
         bool isValid = false;
@@ -159,15 +132,15 @@ private:
             } else {
                 orientation = 'V';
             }
-            // Verificar si la posición generada es válida para colocar el barco
+            // Verificar si la posiciï¿½n generada es vï¿½lida para colocar el barco
             if (EsPosicionValida(row, col, shipSize, 'H') && orientation == 'H') {
-                // Colocar el barco en posición horizontal
+                // Colocar el barco en posiciï¿½n horizontal
                 for (int i = 0; i < shipSize; i++) {
                     board[row][col + i] = shipType;
                 }
                 isValid = true;
             } else if (EsPosicionValida(row, col, shipSize, 'V') && orientation == 'V') {
-                // Colocar el barco en posición vertical
+                // Colocar el barco en posiciï¿½n vertical
                 for (int i = 0; i < shipSize; i++) {
                     board[row + i][col] = shipType;
                 }
@@ -177,8 +150,8 @@ private:
     }
 
     void ColocarBarcoManual(char shipType, int shipSize) {
-        // Solicitar al usuario que ingrese la posición del barco manualmente
-        cout << "\nColocando barco de tipo " << shipType << " (tamaño: " << shipSize << ")" << endl;
+        // Solicitar al usuario que ingrese la posiciï¿½n del barco manualmente
+        cout << "\nColocando barco de tipo " << shipType << " (tamaï¿½o: " << shipSize << ")" << endl;
 
         bool isValid = false;
         while (!isValid) {
@@ -189,39 +162,39 @@ private:
             cin >> row;
             cout << "Ingrese la columna (0-" << SIZE - 1 << "): ";
             cin >> col;
-            cout << "Ingrese la orientación (H para horizontal, V para vertical): ";
+            cout << "Ingrese la orientaciï¿½n (H para horizontal, V para vertical): ";
             cin >> orientation;
 
             if (EsPosicionValida(row, col, shipSize, orientation)) {
                 if (orientation == 'H') {
-                    // Colocar el barco en posición horizontal
+                    // Colocar el barco en posiciï¿½n horizontal
                     for (int i = 0; i < shipSize; i++) {
                         board[row][col + i] = shipType;
                     }
                 } else {
-                    // Colocar el barco en posición vertical
+                    // Colocar el barco en posiciï¿½n vertical
                     for (int i = 0; i < shipSize; i++) {
                         board[row + i][col] = shipType;
                     }
                 }
                 isValid = true;
             } else {
-                cout << "La posición no es válida. Intente nuevamente." << endl;
+                cout << "La posiciï¿½n no es vï¿½lida. Intente nuevamente." << endl;
             }
         }
     }
     
     bool EsPosicionValida(int row, int col, int shipSize, char orientation) {
-        // Verificar si la posición y orientación son válidas para colocar el barco
+        // Verificar si la posiciï¿½n y orientaciï¿½n son vï¿½lidas para colocar el barco
 
-        // Verificar los límites del tablero
+        // Verificar los lï¿½mites del tablero
         if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
             return false;
         }
 
-        // Verificar si las casillas necesarias están vacías horizontalmente
+        // Verificar si las casillas necesarias estï¿½n vacï¿½as horizontalmente
         if (orientation == 'H') {
-            // Verificar si hay suficientes casillas vacías en posición horizontal
+            // Verificar si hay suficientes casillas vacï¿½as en posiciï¿½n horizontal
             if (col + shipSize > SIZE) {
                 return false;
             }
@@ -232,7 +205,7 @@ private:
                 }
             }
         } else {
-            // Verificar si hay suficientes casillas vacías en posición vertical
+            // Verificar si hay suficientes casillas vacï¿½as en posiciï¿½n vertical
             if (row + shipSize > SIZE) {
                 return false;
             }
@@ -246,9 +219,9 @@ private:
 
         return true;
     }
-
+/*
     void SetConsoleColour(WORD* Attributes, DWORD Colour) {
-        // Método para cambiar el color del Foreground o el Background de la consola
+        // Mï¿½todo para cambiar el color del Foreground o el Background de la consola
         CONSOLE_SCREEN_BUFFER_INFO Info;
         HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         GetConsoleScreenBufferInfo(hStdout, &Info);
@@ -257,7 +230,7 @@ private:
     }
 
     void ResetConsoleColour(WORD Attributes) {
-        // Método para reestablecer el color del Foreground o el Background de la consola
+        // Mï¿½todo para reestablecer el color del Foreground o el Background de la consola
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Attributes);
-    }
+    }*/
 };
