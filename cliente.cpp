@@ -1,3 +1,4 @@
+// uso de librerias
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,43 +10,52 @@ using namespace std;
 
 class Client{
 public:
-    //WSADATA WSAData;
+    //Creacion de variables a utilizar
     int server;
     struct sockaddr_in address;
     char buffer[1024];
     char board[15][15];
-    Client()
+    // conexion a puerto del servidor
+    Client(int PORT, char *IP)
     {
+        // reset del buffer
         memset(buffer, 0, sizeof(buffer));
         cout<<"Conectando al servidor..."<<endl<<endl;
-        //WSAStartup(MAKEWORD(2,0), &WSAData);
+        // conexion a un puerto y servidor
         server = socket(AF_INET, SOCK_STREAM, 0);
-        //address.sin_addr.s_addr = inet_pton(AF_INET, "192.168.1.197", &address.sin_addr);
         address.sin_family = AF_INET;
-        address.sin_port = htons(5555);
-        inet_pton(AF_INET, "172.18.242.229", &address.sin_addr);
-        connect(server, (struct sockaddr*)&address, sizeof(address));
-        cout << "Conectado al Servidor!" << endl;
+        address.sin_port = htons(PORT);
+        inet_pton(AF_INET, IP, &address.sin_addr);
+        // conexion al servidor
+        if(connect(server, (struct sockaddr*)&address, sizeof(address)) < 0){
+            cout << "No se logro conexion al Servidor!" << endl;
+        }else{
+            cout << "Conectado al Servidor!" << endl;
+        }
+        
     }
+    // funcion para enviar mensajes al servidor
     void Enviar()
     {
-        //cout<<"Escribe el mensaje a enviar: ";
+        // reset de buffer
         memset(buffer, 0, sizeof(buffer));
         cin>>this->buffer;
         send(server, buffer, sizeof(buffer), 0);
-        memset(buffer, 0, sizeof(buffer));
-        cout << "Mensaje enviado!" << endl;
+        memset(buffer, 0, sizeof(buffer)); 
     }
+    // Funcion para recibir mensajes del servidor
     char Recibir()
     {
+        // reset del buffer
         memset(buffer, 0, sizeof(buffer));
         recv(server, buffer, sizeof(buffer), 0);
-        cout << "El cliente dice: " << buffer << endl;
+        cout << "El servidor dice: " << buffer << endl;
         char temp = buffer[0];
         memset(buffer, 0, sizeof(buffer));
         return temp;
     }
 
+    //Funcion para transformar el mensaje entrante en un entero
     int RecibirNumero() {
         memset(buffer, 0, sizeof(buffer));
         recv(server, buffer, sizeof(buffer), 0);
@@ -54,17 +64,17 @@ public:
         return numero;
     }
 
+    // Cerrar socket del cliente
     void CerrarSocket()
     {
        close(server);
-       //WSACleanup();
        cout << "Socket cerrado." << endl << endl;
     }
+    //Funcion para recibir los tableros del battleship
     void RecibirMatriz(char board[][15]) {
         memset(board, 0, sizeof(char) * 15 * 15);
         char mensaje[15 * 15];
         recv(server, mensaje, sizeof(char) * 15 * 15, 0);
-
         // Convertir el mensaje recibido en una matriz de caracteres
         int k = 0;
         for (int i = 0; i < 15; i++) {
@@ -79,18 +89,27 @@ public:
 
 int main(int argc, char const* argv[])
 {
-    Client* Cliente = new Client();
+    // Creacion de socket cliente y envio y recepcion de priemeros mensajes con el servidor
+    cout << "Ingrese IP servidor (con puntos): ";
+    char ipserv[20];
+    cin >> ipserv;
+    cout << "Ingrese el Puerto del servidor: ";
+    int puerto;
+    cin >> puerto;
+    Client* Cliente = new Client(puerto, ipserv);
     Cliente->Recibir();
     Cliente->Recibir();
-    Cliente->Enviar();
     Cliente->Recibir();
-    Cliente->Recibir();
+    // Proceso de jugado
     while(true)
     {
+        // Variables que almacenan el tablero del jugador y los disparos realizados a la CPU
         char board[15][15];
         char boardcpu[15][15];
-        //system("clear");
+        // Recepcion de matriz de la cpu
+        cout << "TABLERO CPU" << endl;
         Cliente->RecibirMatriz(boardcpu);
+        // Impresion de tablero
         printf("\n    0  1  2  3  4  5  6  7  8  9  10 11 12 13 14\n");
         printf("   ---------------------------------------------\n");
         for(int i=0; i<15; i++){
@@ -106,8 +125,9 @@ int main(int argc, char const* argv[])
             cout << endl;
         }
 
-
+        cout << "\nTABLERO Jugador" << endl;
         Cliente->RecibirMatriz(board);
+        // Impresion de tablero
         printf("\n    0  1  2  3  4  5  6  7  8  9  10 11 12 13 14\n");
         printf("   ---------------------------------------------\n");
         for(int i=0; i<15; i++){
@@ -122,18 +142,34 @@ int main(int argc, char const* argv[])
             }
             cout << endl;
         }
+        // Disparo del jugador
         cout << "\nDisparame\nPosicion x: ";
+        sleep(0.5);
         Cliente->Enviar();
         cout << "Posicion y: ";
+        sleep(0.5);
         Cliente->Enviar();
+        
+        // Recepcion del disparo de la CPU
         cout << "La cpu disparo en " << endl;
         cout << "x : " ;
+        sleep(0.5);
         int  numrecv = Cliente->RecibirNumero();
         cout << numrecv;
-        cout << "\ny : ";        
+        cout << "\ny : ";
+        sleep(0.5);        
         numrecv = Cliente->RecibirNumero();
         cout << numrecv;
-        sleep(2);
-        
+        sleep(1);
+        int finalize = Cliente->RecibirNumero();
+        //cout << finalize << endl;
+        system("clear");
+        if (finalize == 1){
+            cout << "Felicidades, ganaste";
+            Cliente->CerrarSocket();
+        } else if(finalize==2){
+            cout << "Lastima, la cpu gano";
+            Cliente->CerrarSocket();
+        }
     }
 }

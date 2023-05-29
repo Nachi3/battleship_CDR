@@ -1,3 +1,4 @@
+// Clase que crea los tableros de ambos jugadores, y coloca los barcos.
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -16,12 +17,11 @@ private:
     static const int SUBMARINO_SIZE = 3;
     // Tamano de la lancha
     static const int LANCHA_SIZE = 1;
-    // Variable para el cambio de color
-    //WORD Attributes = 0;
 
 public:
-
+    // Tablero
     char board[SIZE][SIZE];
+    // Constructor del tablero, inicializado con espacios
 
     Battleship() {
         // Inicializar el tablero con espacios en blanco
@@ -31,7 +31,7 @@ public:
             }
         }
     }
-
+    // Generacion de tablero aleatoriamente
     void GenerarTableroAleatorio() {
         srand(time(0));  // Semilla aleatoria basada en el tiempo actual
 
@@ -44,25 +44,8 @@ public:
         GenerarBarco('L', LANCHA_SIZE);
         GenerarBarco('L', LANCHA_SIZE);
         GenerarBarco('L', LANCHA_SIZE);
-
-        // Mostrar el tablero generado
-        //MostrarTablero();
     }
-
-    void GenerarTableroManual() {
-        // Solicitar al usuario que ingrese las posiciones de los barcos manualmente
-        ColocarBarcoManual('P', PORTAAVIONES_SIZE);
-        ColocarBarcoManual('B', BUQUE_SIZE);
-        ColocarBarcoManual('B', BUQUE_SIZE);
-        ColocarBarcoManual('S', SUBMARINO_SIZE);
-        ColocarBarcoManual('S', SUBMARINO_SIZE);
-        ColocarBarcoManual('L', LANCHA_SIZE);
-        ColocarBarcoManual('L', LANCHA_SIZE);
-        ColocarBarcoManual('L', LANCHA_SIZE);
-
-        // Mostrar el tablero generado
-        //system("cls"); //MostrarTablero();
-    }
+    // Funcion para imprimir el tablero en consola
 
     void MostrarTablero() {
         //Poner encabezado
@@ -124,7 +107,7 @@ public:
         }
     }
 
-    // Indicar si en el tablero solo existe agua o disparos
+    // Indica si termino el juego, solo si en el tablero solo existe agua o disparos
 	int ganar(){
         for(int i = 0; i < SIZE; i++)
             for(int j = 0; j < SIZE; j++)
@@ -133,6 +116,7 @@ public:
     }
 
 private:
+    // Funcion que coloca cada barco aleatoriamente
     void GenerarBarco(char shipType, int shipSize) {
         // Generar una posicion aleatoria para el barco
         int row, col, vert_hor;
@@ -152,7 +136,7 @@ private:
             }
             // Verificar si la posicion generada es valida para colocar el barco
             if (EsPosicionValida(row, col, shipSize, 'H') && orientation == 'H') {
-                // Colocar el barco en posici�n horizontal
+                // Colocar el barco en posicion horizontal
                 for (int i = 0; i < shipSize; i++) {
                     board[row][col + i] = shipType;
                 }
@@ -167,65 +151,12 @@ private:
         }
     }
 
-    void ColocarBarcoManual(char shipType, int shipSize) {
-        // Solicitar al usuario que ingrese la posicion del barco manualmente
-        cout << "\nColocando barco de tipo " << shipType << " (tamano: " << shipSize << ")" << endl;
-
-        bool isValid = false;
-        while (!isValid) {
-            int row, col;
-            char orientation;
-
-            cout << "Ingrese la fila (0-" << SIZE - 1 << "): ";
-            cin >> row;
-            cout << "Ingrese la columna (0-" << SIZE - 1 << "): ";
-            cin >> col;
-
-            while (true && shipSize!=1) { // Las lanchas no piden orientacion
-                cout << "Ingrese la orientacion (H para horizontal, V para vertical): ";
-                cin >> orientation;
-                orientation = toupper(orientation); // Convertir a mayúscula
-                if (orientation == 'H' || orientation == 'V') {
-                    break; // Sale del bucle si la orientacion es valida
-                } else {
-                    cout << "\nOrientacion no valida. Por favor, ingrese H para horizontal o V para vertical.\n" << endl;
-                }
-            }
-
-            if (EsPosicionValida(row, col, shipSize, orientation)) {
-                if (orientation == 'H') {
-                    // Colocar el barco en posicion horizontal
-                    for (int i = 0; i < shipSize; i++) {
-                        board[row][col + i] = shipType;
-                    }
-                } else {
-                    // Colocar el barco en posicion vertical
-                    for (int i = 0; i < shipSize; i++) {
-                        board[row + i][col] = shipType;
-                    }
-                }
-                isValid = true;
-            } else {
-                cout << "La posicion no es valida. Intente nuevamente." << endl;
-            }
-        }
-    }
-
-    bool EsPosicionValida(int row, int col, int shipSize, char orientation) {
-        // Verificar si la posicion y orientacion son validas para colocar el barco
-
-        // Verificar los limites del tablero
-        if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
-            return false;
-        }
-
         // Verificar si las casillas necesarias estan vacias horizontalmente
         if (orientation == 'H') {
             // Verificar si hay suficientes casillas vacias en posicion horizontal
             if (col + shipSize > SIZE) {
                 return false;
             }
-
             for (int i = 0; i < shipSize; i++) {
                 if (board[row][col + i] != ' ') {
                     return false;
@@ -236,7 +167,6 @@ private:
             if (row + shipSize > SIZE) {
                 return false;
             }
-
             for (int i = 0; i < shipSize; i++) {
                 if (board[row + i][col] != ' ') {
                     return false;
@@ -244,5 +174,4 @@ private:
             }
         }
         return true;
-    }
-};
+}
