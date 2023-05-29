@@ -1,7 +1,8 @@
+// Definicion de la clase derribos, esta almacena los disparos de cada jugador
 #include "Derribos.h"
 
 using namespace std;
-
+// Constructor
 Derribos::Derribos() {
     for(int i=0; i<SIZE_TABLE; i++){
         for(int j=0; j<SIZE_TABLE; j++){
@@ -9,7 +10,7 @@ Derribos::Derribos() {
         }
     }
 }
-
+// Agrega un disparo a la matriz de derribos (X o la letra del barco)
 char Derribos::agregar(int position_x, int position_y, char ship){
     if (ship=='P'){
         portaaviones_hundidos += 1;
@@ -29,7 +30,7 @@ char Derribos::agregar(int position_x, int position_y, char ship){
         return ship;
     }
 }
-
+// Imprime la matriz de derribos
 void Derribos::imprimir(){
     for(int i=0; i<SIZE_TABLE; i++){
         for(int j=0; j<SIZE_TABLE; j++){
@@ -38,7 +39,7 @@ void Derribos::imprimir(){
     cout << endl;
     }
 }
-
+// Imprime cuantos barcos estan hundidos
 void Derribos::imprimir_barcos_hundidos(){
     cout << "Portaaviones hundidos: " << portaaviones_hundidos/PORTAAVIONES_SIZE << endl;
     cout << "Buques hundidos: " << buques_hundidos/BUQUE_SIZE << endl;
@@ -46,6 +47,7 @@ void Derribos::imprimir_barcos_hundidos(){
     cout << "Lanchas hundidas: " << lanchas_hundidos/LANCHA_SIZE << endl;
 }
 
+// funciones getters
 int Derribos::getPortaavionesNum(){
     return PORTAAVIONES_NUM;
 }
