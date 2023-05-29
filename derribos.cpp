@@ -21,7 +21,7 @@ char Derribos::agregar(int position_x, int position_y, char ship){
         lanchas_hundidos += 1;
     }
 
-    if (ship==' ' || ship=='X'){
+    if (ship=='0' || ship=='X'){
         derribo[position_x][position_y] = 'X';
         return 'X';
     } else {

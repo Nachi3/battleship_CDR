@@ -18,6 +18,7 @@ public:
     char buffer[1024];
     Server()
     {
+        memset(buffer, 0, sizeof(buffer));
         // Creando el socket
         if ((server = socket(AF_INET, SOCK_STREAM, 0)) < 0){
             perror("socket failed");
@@ -48,21 +49,55 @@ public:
         }
     }
 
-    string Recibir()
+    char Recibir()
     {
-      recv(client, buffer, sizeof(buffer), 0);
-      cout << "El cliente dice: " << buffer << endl;
-      memset(buffer, 0, sizeof(buffer));
-      return "";
-    }
-    void Enviar()
-    {
-        cout<<"Escribe el mensaje a enviar: ";
-        cin>>this->buffer;
-        send(client, buffer, sizeof(buffer), 0);
         memset(buffer, 0, sizeof(buffer));
-        cout << "Mensaje enviado!" << endl;
+        recv(client, buffer, sizeof(buffer), 0);
+        cout << "El cliente dice: " << buffer << endl;
+        char temp = buffer[0];
+        memset(buffer, 0, sizeof(buffer));
+        return temp;
     }
+
+    int RecibirNumero() {
+        memset(buffer, 0, sizeof(buffer));
+        recv(client, buffer, sizeof(buffer), 0);
+        int numero = atoi(buffer); // Convertir el mensaje recibido a un entero
+        memset(buffer, 0, sizeof(buffer));
+        return numero;
+    }
+
+    void Enviar(const char* mensaje)
+    {
+        memset(buffer, 0, sizeof(buffer));
+        send(client, mensaje, strlen(mensaje), 0);
+        cout << "Mensaje enviado al cliente." << endl;
+        memset(buffer, 0, sizeof(buffer));
+    }
+
+    void EnviarMatriz(char board[][15]) {
+        memset(buffer, 0, sizeof(buffer));
+        // Convertir la matriz a una cadena de caracteres
+        std::string mensaje;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                mensaje += board[i][j];
+            }
+        }
+        int index = 0;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                cout << mensaje[index] << " ";
+                index++;
+            }
+            cout << endl;
+        }
+        // Enviar el mensaje al cliente
+        send(client, mensaje.c_str(), mensaje.length(), 0);
+        //memset(board, 0, sizeof(char) * 15 * 15);
+        cout << "Matriz enviada al cliente." << endl;
+    }
+
     void CerrarSocket()
     {
         close(client);
@@ -71,7 +106,7 @@ public:
 };
 
 
-
+/*
 int main()
 {
   Server *Servidor = new Server();
@@ -82,4 +117,4 @@ int main()
   }
 
 }
-
+*/
