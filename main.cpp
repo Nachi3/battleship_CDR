@@ -1,104 +1,188 @@
-/*Uso de librerias*/
+// first commit
 #include <iostream>
 #include <limits>
 #include <unistd.h>
-#include <cstdlib>
 #include "tablero.cpp"
 #include "Derribos.h"
+//#include "Mapadecalor.cpp"
 #include "servidor.cpp"
 
 using namespace std;
 
+//void target(Battleship& myBattleship, int x, int y, char letra, Derribos& myDerribos, MapaCalor& myMapaCalor);
+
 int main(){
-    std::srand(std::time(nullptr));
-    // Creacion del battleship para el cpu
     Battleship mybattleship;
-    // Creacion del battleship para el jugador
     Battleship yourbattleship;
-    // Generacion tablero aleatorio para cpu y jugador
     mybattleship.GenerarTableroAleatorio();
-    sleep(1);
-    yourbattleship.GenerarTableroAleatorio();
     //mybattleship.MostrarTablero();
-    int PORT;
-    cout << "Ingrese el puerto: ";
-    cin >> PORT;
-    Server *Servidor = new Server(PORT); 
-    
-    // Tabla de derribos para mostrar al jugador y para que juegue el cpu
+    Server *Servidor = new Server(); 
     Derribos myDerribo;
     Derribos yourDerribos;
-    
-    //Primeros mensajes para la generacion de la tabla del jugador, de forma aleatoria o manual
-    Servidor->Enviar("Bienvenido a battleship");
-    // variables para almacenar la victoria del cpu o del jugador
+    //MapaCalor myMapaCalor;
+
+    Servidor->Enviar("¿Como desea generar su tablero?:");
+    Servidor->Enviar("\n(1) Aleatoriamente\n(2) Manualmente\nEliga una opcion: ");
+    char temp = Servidor->Recibir();
+    int option = temp - '0';
+    while (option!=1 && option!=2) {
+        cout << "Opción inválida. Por favor, elija '1' o '2': ";
+        temp = Servidor->Recibir();
+        int option = temp - '0';
+    }
+
+    if (option == 1){
+        yourbattleship.GenerarTableroAleatorio();
+    } else {
+        yourbattleship.GenerarTableroManual();
+    }
     bool winserver = false;
     bool winclient = false;
     Servidor->Enviar("Matriz Generada:\n");
     sleep(0.5);
-    // Mensaje de comienzo
     Servidor->Enviar("Que comience el juego!");
 
-    // ejecucion del juego mientras nadie haya ganado
     while(winserver==false && winclient==false){
         // Envio de tableros a cliente
+
         Servidor->EnviarMatriz(myDerribo.derribo);
         Servidor->EnviarMatriz(yourbattleship.board);
         mybattleship.MostrarTablero();
         // Recepcion disparos cliente
-
-        sleep(0.5);
         int position_x = Servidor->RecibirNumero();
-        sleep(0.5);
         int position_y = Servidor->RecibirNumero();
-        // agregar disparo del cliente al tablero enemigo
         myDerribo.agregar(position_x, position_y, mybattleship.shot(position_x, position_y));
         
-        //Disparo aleatorio de cpu
-        int x = std::rand() % 15;
-        sleep(1);
-        int y = std::rand() % 15;
-        while(yourDerribos.derribo[x][y]!='0' && (x>=0 && x<15) && (y>=0 && y<15)){
-            x = std::rand() % 15;
-            sleep(1);
-            y = std::rand() % 15;
+        //Disparo de cpu
+        int x = rand() % 15;
+        int y = rand() % 15;
+        while(yourDerribos.derribo[x][y]!='0' && x>=0 && y<15){
+            x = rand() % 15;
+            y = rand() % 15;
         }
-        // Envio de disparos
         yourDerribos.agregar(x, y, yourbattleship.shot(x, y));
         string numeroString = to_string(x);
-        const char* numer = numeroString.c_str();
         sleep(0.5);
-        Servidor->Enviar(numer);
+        Servidor->Enviar(numeroString.c_str());
         numeroString = to_string(y);
-        numer = numeroString.c_str();
         sleep(0.5);
-        Servidor->Enviar(numer);
-        sleep(1);
-        // condicion de victoria, si alguno gana, se cierra el socket
+        Servidor->Enviar(numeroString.c_str());
+        
+        // condicion de victoria
         if (mybattleship.ganar() == 1){
             winserver = true;
-            const char* aux = "2";
-            Servidor->Enviar(aux);
             Servidor->CerrarSocket();
         } else if (yourbattleship.ganar() == 1){
             winclient = true;
-            const char* aux = "1";
-            Servidor->Enviar(aux);
             Servidor->CerrarSocket();
-        } else {
-            const char* aux = "0";
-            Servidor->Enviar(aux);
         } 
-        
+        //mybattleship.MostrarTablero();
     }
-
-    //Mensaje post finalizacion del socket
     if(winclient==true){
-        cout << "\nHa ganado el cliente";
+        cout << "\nGANASTE!";
     }else{
-        cout << "\nHa ganado el servidor";
+        cout << "\nPERDISTE!";
     }
-
+    Servidor->CerrarSocket();
     return 0;
 
 }
+
+/*
+    //myMapaCalor.Imprimir();
+    myMapaCalor.mapahunt(myDerribo);
+    //myMapaCalor.Imprimir();
+    //myDerribo.imprimir();
+
+    while(mybattleship.ganar()==0){
+        MapaCalor myMapaCalor;
+        myMapaCalor.mapahunt(myDerribo);
+        int mayor=myMapaCalor.m[0][0];
+        int x=0,y=0;
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
+                if(mayor<myMapaCalor.m[i][j]){
+                    mayor=myMapaCalor.m[i][j];
+                }
+            }
+        }
+        myMapaCalor.Imprimir();
+        //sleep(2);
+        myDerribo.imprimir();
+        cout<<endl;
+        while(mayor!=myMapaCalor.m[x][y]){
+            x=rand() % 15;
+            y=rand() % 15;
+        }
+
+        char letra=myDerribo.agregar(x,y,mybattleship.shot(x,y));
+
+        if(letra!='X' && letra!='0'){
+            target(mybattleship,x,y,letra,myDerribo,myMapaCalor);
+        }
+
+        myDerribo.imprimir();
+    }
+
+    cout << "you win" << endl;
+*/
+
+/*
+void target(Battleship& myBattleship, int x, int y, char letra, Derribos& myDerribos, MapaCalor& myMapaCalor){
+        if(letra!='X' && letra!=' '){
+            int num,tamano;
+            if(letra=='P'){
+                num=myDerribos.portaaviones_hundidos;
+                tamano=myDerribos.getPortaavionesSize();
+            }else if(letra=='B'){
+                num=myDerribos.buques_hundidos;
+                tamano=myDerribos.getBuquesSize();
+                if (num>=tamano){
+                    num = num % 4;
+                }
+            }else if(letra=='S'){
+                num=myDerribos.submarinos_hundidos;
+                tamano=myDerribos.getSubmarinosSize();
+                if (num>=tamano){
+                    num = num % 3;
+                }
+            }else{
+                num=myDerribos.lanchas_hundidos;
+                tamano=myDerribos.getLanchasSize();
+                if (num>=tamano){
+                    num = num % 1;
+                }
+            }
+            while(num<tamano){
+                MapaCalor myMapaCalor;
+                myMapaCalor.mapatarget(x,y,letra,myDerribos,15);
+                int mayor=myMapaCalor.m[0][0];
+                for(int i=0;i<15;i++){
+                    for(int j=0;j<15;j++){
+                        if(mayor<myMapaCalor.m[i][j]){
+                            mayor=myMapaCalor.m[i][j];
+                        }
+                    }
+                }
+                while(mayor!=myMapaCalor.m[x][y]){
+                    x=rand() % 15;
+                    y=rand() % 15;
+                }
+                int hit=myDerribos.agregar(x,y,myBattleship.shot(x,y));
+                if(letra!=hit && hit!='X'){
+                    target(myBattleship,x,y,hit,myDerribos,myMapaCalor);
+                }
+                if(letra=='P'){
+                    num=myDerribos.portaaviones_hundidos;
+                }else if(letra=='B'){
+                    num=myDerribos.buques_hundidos;
+                }else if(letra=='S'){
+                    num=myDerribos.submarinos_hundidos;
+                }else{
+                    num=myDerribos.lanchas_hundidos;
+                }
+            }
+        }
+        
+}
+*/

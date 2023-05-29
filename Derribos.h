@@ -1,4 +1,3 @@
-// Archivo derribos.cpp transformado en un header
 #ifndef DERRIBOS_H
 #define DERRIBOS_H
 
